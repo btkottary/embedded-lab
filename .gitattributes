@@ -1,0 +1,15 @@
+# Store text with LF in the repo; check out with LF too (shell scripts break with CRLF).
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# Binaries
+*.png binary
+*.jpg binary
+*.gif binary
+*.pdf binary
+*.elf binary
+*.bin binary
+*.hex binary

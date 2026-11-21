@@ -1,0 +1,49 @@
+{
+  // Ctrl+Shift+B = default build task. "Terminal > Run Task..." lists all.
+  // Tasks run in PowerShell and dot-source tools/env.ps1 themselves, so they
+  // work whichever terminal you use (Git Bash, PowerShell, ...).
+  "version": "2.0.0",
+  "options": {
+    "shell": {
+      "executable": "powershell.exe",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+    }
+  },
+  "tasks": [
+    {
+      "label": "Build: H7S78-DK",
+      "type": "shell",
+      "command": ". ./tools/env.ps1 | Out-Null; cmake --preset h7s78_dk; if ($?) { cmake --build --preset h7s78_dk }",
+      "problemMatcher": { "base": "$gcc", "fileLocation": ["autoDetect", "${workspaceFolder}"] },
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "Build: N6570-DK",
+      "type": "shell",
+      "command": ". ./tools/env.ps1 | Out-Null; cmake --preset n6570_dk; if ($?) { cmake --build --preset n6570_dk }",
+      "problemMatcher": { "base": "$gcc", "fileLocation": ["autoDetect", "${workspaceFolder}"] },
+      "group": "build"
+    },
+    {
+      "label": "Flash: H7S78-DK (blink)",
+      "type": "shell",
+      "command": "./tools/flash.ps1 -Board h7s78_dk -App blink",
+      "dependsOn": "Build: H7S78-DK",
+      "problemMatcher": []
+    },
+    {
+      "label": "Flash: N6570-DK (blink)",
+      "type": "shell",
+      "command": "./tools/flash.ps1 -Board n6570_dk -App blink",
+      "dependsOn": "Build: N6570-DK",
+      "problemMatcher": []
+    },
+    {
+      "label": "Unit tests (host)",
+      "type": "shell",
+      "command": "./tools/test.ps1",
+      "problemMatcher": { "base": "$gcc", "fileLocation": ["autoDetect", "${workspaceFolder}"] },
+      "group": { "kind": "test", "isDefault": true }
+    }
+  ]
+}

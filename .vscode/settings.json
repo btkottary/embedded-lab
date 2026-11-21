@@ -1,0 +1,8 @@
+{
+  "cmake.useCMakePresets": "always",
+  "cmake.configureOnOpen": false,
+  "editor.formatOnSave": false,
+  "files.associations": { "*.ld": "linkerscript", "*.s": "arm" },
+  "files.exclude": { "build/": true },
+  "search.exclude": { "third_party/": true, "build/": true }
+}

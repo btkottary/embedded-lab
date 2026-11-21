@@ -1,0 +1,48 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "firmware",
+      "hidden": true,
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/arm-none-eabi.cmake"
+    },
+    {
+      "name": "h7s78_dk",
+      "displayName": "STM32H7S78-DK firmware",
+      "inherits": "firmware",
+      "cacheVariables": { "BOARD": "h7s78_dk" }
+    },
+    {
+      "name": "n6570_dk",
+      "displayName": "STM32N6570-DK firmware",
+      "inherits": "firmware",
+      "cacheVariables": { "BOARD": "n6570_dk" }
+    },
+    {
+      "name": "host-tests",
+      "displayName": "Unit tests on the PC",
+      "inherits": "base",
+      "cacheVariables": { "BOARD": "host", "CMAKE_C_COMPILER": "gcc" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "h7s78_dk",   "configurePreset": "h7s78_dk" },
+    { "name": "n6570_dk",   "configurePreset": "n6570_dk" },
+    { "name": "host-tests", "configurePreset": "host-tests" }
+  ],
+  "testPresets": [
+    {
+      "name": "host-tests",
+      "configurePreset": "host-tests",
+      "output": { "outputOnFailure": true }
+    }
+  ]
+}

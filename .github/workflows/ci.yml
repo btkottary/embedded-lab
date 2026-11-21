@@ -1,0 +1,94 @@
+# Runs on every push to main and every pull request.
+# A PR may only be merged when all three jobs are green.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  firmware:
+    name: Firmware (${{ matrix.board }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [h7s78_dk, n6570_dk]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Arm GNU Toolchain
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+        with:
+          release: '13.3.Rel1'   # same major version as the GCC inside STM32CubeIDE 2.0
+
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.board }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.board }}
+
+      # CI has no ST signing tool, so the N6 .bin here is unsigned:
+      # build locally (Windows + STM32CubeProgrammer) to get <app>-trusted.bin
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ matrix.board }}
+          path: |
+            build/${{ matrix.board }}/apps/*/*.elf
+            build/${{ matrix.board }}/apps/*/*.hex
+            build/${{ matrix.board }}/apps/*/*.bin
+            build/${{ matrix.board }}/apps/*/*.map
+
+  unit-tests:
+    name: Unit tests (host)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Configure
+        run: cmake --preset host-tests
+
+      - name: Build
+        run: cmake --build --preset host-tests
+
+      - name: Test
+        run: ctest --preset host-tests
+
+  static-analysis:
+    name: Format + static analysis
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update && sudo apt-get install -y cppcheck
+          pip install clang-format==18.1.8
+
+      - name: clang-format (check only)
+        run: |
+          find apps boards libs drivers tests -name '*.[ch]' -not -name '*_hal_conf.h' -print0 \
+            | xargs -0 clang-format --dry-run --Werror
+
+      - name: cppcheck
+        run: |
+          cppcheck --enable=warning,performance,portability --error-exitcode=1 \
+            --inline-suppr --suppress=missingIncludeSystem --suppress=missingInclude \
+            -I boards/include -I libs/ringbuf/include \
+            -i boards/h7s78_dk/include -i boards/n6570_dk/include \
+            apps boards libs drivers

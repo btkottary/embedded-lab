@@ -1,0 +1,10 @@
+{
+  // IntelliSense uses the exact flags from each preset's compile_commands.json.
+  // Switch with the configuration name in the status bar (bottom right).
+  "configurations": [
+    { "name": "H7S78-DK", "compileCommands": "${workspaceFolder}/build/h7s78_dk/compile_commands.json" },
+    { "name": "N6570-DK", "compileCommands": "${workspaceFolder}/build/n6570_dk/compile_commands.json" },
+    { "name": "Host tests", "compileCommands": "${workspaceFolder}/build/host-tests/compile_commands.json" }
+  ],
+  "version": 4
+}

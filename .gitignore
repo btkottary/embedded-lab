@@ -1,0 +1,11 @@
+# Build output (one folder per CMake preset)
+build/
+
+# Editor / OS
+.vs/
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# Local, machine-specific settings
+CMakeUserPresets.json

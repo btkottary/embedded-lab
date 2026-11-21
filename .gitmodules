@@ -1,0 +1,24 @@
+[submodule "third_party/cmsis_6"]
+	path = third_party/cmsis_6
+	url = https://github.com/ARM-software/CMSIS_6.git
+	shallow = true
+[submodule "third_party/stm32h7rs/hal"]
+	path = third_party/stm32h7rs/hal
+	url = https://github.com/STMicroelectronics/stm32h7rsxx-hal-driver.git
+	shallow = true
+[submodule "third_party/stm32h7rs/cmsis_device"]
+	path = third_party/stm32h7rs/cmsis_device
+	url = https://github.com/STMicroelectronics/cmsis-device-h7rs.git
+	shallow = true
+[submodule "third_party/stm32n6/hal"]
+	path = third_party/stm32n6/hal
+	url = https://github.com/STMicroelectronics/stm32n6xx-hal-driver.git
+	shallow = true
+[submodule "third_party/stm32n6/cmsis_device"]
+	path = third_party/stm32n6/cmsis_device
+	url = https://github.com/STMicroelectronics/cmsis-device-n6.git
+	shallow = true
+[submodule "third_party/unity"]
+	path = third_party/unity
+	url = https://github.com/ThrowTheSwitch/Unity.git
+	shallow = true
