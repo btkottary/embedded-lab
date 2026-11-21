@@ -22,6 +22,8 @@ add_library(board_vendor OBJECT
   ${HAL}/Src/stm32h7rsxx_hal_pwr_ex.c
   ${HAL}/Src/stm32h7rsxx_hal_flash.c
   ${HAL}/Src/stm32h7rsxx_hal_flash_ex.c
+  ${HAL}/Src/stm32h7rsxx_hal_uart.c
+  ${HAL}/Src/stm32h7rsxx_hal_uart_ex.c
 )
 # SYSTEM: warnings inside vendor headers don't fail OUR -Werror build
 target_include_directories(board_vendor SYSTEM PUBLIC
@@ -36,10 +38,11 @@ target_link_libraries(board_vendor PUBLIC lab_mcu)
 # ---- Our board support code (implements boards/include/board.h) -----------
 add_library(board OBJECT
   src/board.c
+  src/board_console.c
   src/stm32h7rsxx_it.c
   ../common/syscalls.c
 )
-target_include_directories(board PUBLIC ../include)
+target_include_directories(board PUBLIC ../include PRIVATE ../common)
 target_link_libraries(board PUBLIC board_vendor PRIVATE lab_warnings)
 target_link_options(board PUBLIC
   -T${DEV}/Source/Templates/gcc/linker/stm32h7s7xx_flash.ld

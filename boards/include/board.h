@@ -12,13 +12,17 @@
 #define BOARD_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** Bring the board up: HAL, system tick, clocks, LED pins. Call first in main(). */
+/**
+ * Bring the board up: HAL, system tick, clocks, LED pins and the debug
+ * console (so printf() works). Call first in main().
+ */
 void board_init(void);
 
 /** Human-readable board name, e.g. "STM32H7S78-DK". */
@@ -38,6 +42,13 @@ uint32_t board_millis(void);
 
 /** Busy-wait for @p ms milliseconds. */
 void board_delay_ms(uint32_t ms);
+
+/**
+ * Send @p len raw bytes to the debug console: the ST-LINK virtual COM port,
+ * 115200 baud, 8N1. Blocks until sent. printf() reaches this through
+ * _write() in boards/common/syscalls.c, which also turns "\n" into "\r\n".
+ */
+void board_console_write(const char *data, size_t len);
 
 /** Unrecoverable error: show it on the LEDs and stop. Never returns. */
 void board_panic(void) __attribute__((noreturn));
