@@ -25,6 +25,8 @@ add_library(board_vendor OBJECT
   ${HAL}/Src/stm32n6xx_hal_rcc_ex.c
   ${HAL}/Src/stm32n6xx_hal_pwr.c
   ${HAL}/Src/stm32n6xx_hal_pwr_ex.c
+  ${HAL}/Src/stm32n6xx_hal_uart.c
+  ${HAL}/Src/stm32n6xx_hal_uart_ex.c
 )
 target_include_directories(board_vendor SYSTEM PUBLIC
   ${HAL}/Inc
@@ -38,10 +40,11 @@ target_link_libraries(board_vendor PUBLIC lab_mcu)
 # ---- Our board support code ------------------------------------------------
 add_library(board OBJECT
   src/board.c
+  src/board_console.c
   src/stm32n6xx_it.c
   ../common/syscalls.c
 )
-target_include_directories(board PUBLIC ../include)
+target_include_directories(board PUBLIC ../include PRIVATE ../common)
 target_link_libraries(board PUBLIC board_vendor PRIVATE lab_warnings)
 target_link_options(board PUBLIC
   -T${DEV}/Source/Templates/gcc/linker/STM32N657XX_AXISRAM2_fsbl.ld

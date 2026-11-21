@@ -20,6 +20,19 @@ if(NOT TARGET lab_mcu)
   add_library(lab_mcu INTERFACE)   # boards fill this in
 endif()
 
+# Firmware version string, e.g. "v0.2.0-3-g1a2b3c4-dirty" (from git tags).
+# Read at configure time: re-run "cmake --preset ..." to refresh it.
+execute_process(
+  COMMAND git describe --tags --always --dirty
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE LAB_GIT_VERSION
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_QUIET
+)
+if(NOT LAB_GIT_VERSION)
+  set(LAB_GIT_VERSION "unknown")
+endif()
+
 function(lab_add_firmware name)
   cmake_parse_arguments(ARG "" "" "SOURCES;LIBS" ${ARGN})
   if(BOARD STREQUAL "host")
@@ -30,6 +43,10 @@ function(lab_add_firmware name)
   # board        = our board support code (strict warnings)
   # board_vendor = ST HAL + startup + system file (vendor code, default warnings)
   target_link_libraries(${name} PRIVATE board board_vendor lab_warnings ${ARG_LIBS})
+  target_compile_definitions(${name} PRIVATE
+    LAB_VERSION="${PROJECT_VERSION}"       # from project(... VERSION x.y.z)
+    LAB_GIT_VERSION="${LAB_GIT_VERSION}"
+  )
   target_link_options(${name} PRIVATE
     -Wl,-Map=$<TARGET_FILE_DIR:${name}>/${name}.map
     -Wl,--print-memory-usage

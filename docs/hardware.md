@@ -27,6 +27,16 @@
 | VCP UART | USART1 TX PE5 / RX PE6 |
 | Ethernet | Gigabit, RTL8211F PHY (RGMII) |
 
+## Debug console (both boards)
+
+- Both ST-LINKs show up as "STMicroelectronics STLink Virtual COM Port (COMx)". `bash tools/serial.sh -List`
+  shows the numbers. To find which board is which, unplug one and list again.
+- Settings: 115200 baud, 8 data bits, no parity, 1 stop bit, no flow control.
+- `printf()` → `_write()` (`boards/common/syscalls.c`, which turns `\n` into `\r\n`) → `board_console_write()`
+  → blocking `HAL_UART_Transmit()`.
+- stdout uses a 128-byte static line buffer, so `printf()` never calls `malloc()`. Output appears at each `\n`.
+- If the terminal is opened after reset, you miss the banner. Press RESET with the terminal already open.
+
 ## Lab network (later phases)
 
 - PC: Hyper-V switch `EXT_SW`, `vEthernet (EXT_SW)` = 192.168.1.10/24.

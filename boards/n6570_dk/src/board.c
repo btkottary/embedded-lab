@@ -9,6 +9,8 @@
  * Gotcha: port O only works after HAL_PWREx_EnableVddIO2().
  */
 #include "board.h"
+#include "board_common.h"
+#include "board_console.h"
 #include "stm32n6xx_hal.h"
 
 typedef struct
@@ -52,6 +54,8 @@ void board_init(void)
         board_panic();
     }
     init_leds();
+    board_console_init();
+    board_common_stdio_init();
 }
 
 const char *board_name(void)

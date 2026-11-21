@@ -12,6 +12,8 @@
  * enables that supply, writes to those pins have no visible effect.
  */
 #include "board.h"
+#include "board_common.h"
+#include "board_console.h"
 #include "stm32h7rsxx_hal.h"
 
 #define USB33_READY_TIMEOUT_MS 100U
@@ -77,6 +79,8 @@ void board_init(void)
     }
     enable_io_supplies();
     init_leds();
+    board_console_init();
+    board_common_stdio_init();
 }
 
 const char *board_name(void)

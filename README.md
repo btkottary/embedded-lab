@@ -8,8 +8,13 @@ code generator. One code base runs on several boards:
 
 | Board | MCU | Core | Status |
 |---|---|---|---|
-| STM32H7S78-DK | STM32H7S7L8 | Cortex-M7 | blink ✅ |
-| STM32N6570-DK | STM32N657X0 | Cortex-M55 | blink ✅ |
+| STM32H7S78-DK | STM32H7S7L8 | Cortex-M7 | blink ✅ · printf over VCP ✅ |
+| STM32N6570-DK | STM32N657X0 | Cortex-M55 | blink ✅ · printf over VCP (builds; hardware check pending) |
+
+| App | What it shows |
+|---|---|
+| `apps/blink` | LEDs in turn, through the board API only |
+| `apps/hello` | `printf()` on the ST-LINK virtual COM port (115200 8N1), version banner, fixed-rate 1 s tick |
 
 ## Layout
 
@@ -46,10 +51,14 @@ bash tools/flash.sh h7s78_dk blink        # flash over ST-LINK
 cmake --preset n6570_dk && cmake --build --preset n6570_dk
 bash tools/flash.sh n6570_dk blink        # asks you to set BOOT1 first
 
+bash tools/flash.sh h7s78_dk hello        # the printf app
+bash tools/serial.sh                      # serial terminal (Esc quits; -List / -Port COMx)
+
 bash tools/test.sh                        # unit tests on the PC
 ```
 
-PowerShell users: `. .\tools\env.ps1`, `.\tools\flash.ps1 -Board h7s78_dk`, `.\tools\test.ps1`.
+PowerShell users: `. .\tools\env.ps1`, `.\tools\flash.ps1 -Board h7s78_dk`, `.\tools\serial.ps1`, `.\tools\test.ps1`.
+VS Code alternative to `serial.sh`: the recommended **Serial Monitor** extension (115200 baud).
 In VS Code: **Ctrl+Shift+B** builds, and **Terminal → Run Task** lists flash and test.
 
 Board jumpers, boot switches and other gotchas: [docs/hardware.md](docs/hardware.md).
